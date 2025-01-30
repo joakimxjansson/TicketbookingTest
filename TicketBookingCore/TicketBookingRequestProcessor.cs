@@ -11,19 +11,20 @@ public class TicketBookingRequestProcessor {
         if (request is null)
             
             throw new ArgumentNullException(nameof(request));
-        var ticketBooking = new TicketBooking {
+        _ticketBookingRepository.Save(Create<TicketBooking>(request));
+        return Create<TicketBookingResponse>(request);
+    }
+    private static T Create<T>(TicketBookingRequest request) where T :
+        TicketBookingBase, new()
+    {
+        return new T
+        {
             FirstName = request.FirstName,
             LastName = request.LastName,
             Email = request.Email
         };
-        _ticketBookingRepository.Save(ticketBooking);
-        
-        return new TicketBookingResponse() {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Email = request.Email,
-        };
+    }
+
         
     }
     
-}

@@ -13,8 +13,12 @@ public class TicketBookingRequestProcessorTests {
     {
         _ticketBookingRepositoryMock = new Mock<ITicketBookingRepository>();
         _processor = new TicketBookingRequestProcessor(_ticketBookingRepositoryMock.Object);
-        _request = new TicketBookingRequest();
-       
+        _request = new TicketBookingRequest {
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "johndoe@gmail.com"
+        };
+
     }
     [Fact]
     public void ShouldReturnTicketBookingResultWithRequestValues() {
@@ -47,9 +51,12 @@ public class TicketBookingRequestProcessorTests {
                 savedTicketBooking = ticketBooking;
             });
         //Act
-      
+      _processor.Book(_request);
         //
-        TicketBookingResponse response = _processor.Book(_request);
+        _ticketBookingRepositoryMock.Verify(x => x.Save(It.IsAny<TicketBooking>()),
+            Times.Once);
+
+        
         
         Assert.NotNull(savedTicketBooking);
         Assert.Equal(_request.FirstName, savedTicketBooking.FirstName);
